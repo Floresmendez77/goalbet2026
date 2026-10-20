@@ -6,7 +6,7 @@
 ![Cypress](https://img.shields.io/badge/Cypress-E2E-17202C?style=for-the-badge&logo=cypress&logoColor=white)
 [![QA CI](https://github.com/Floresmendez77/goalbet2026/actions/workflows/qa.yml/badge.svg)](https://github.com/Floresmendez77/goalbet2026/actions/workflows/qa.yml)
 
-> **Demo en vivo:** _(pendiente: pega aquí la URL de AlwaysData cuando despliegues)_
+
 
 > [!WARNING]
 > **Proyecto educativo y de portafolio.** Todo el dinero y los saldos son **simulados**: no existe ningún procesamiento de pagos reales. El sitio incluye aviso +18 y de juego responsable.
