@@ -1,0 +1,17 @@
+{
+  "name": "goalbet2026-qa",
+  "version": "1.0.0",
+  "description": "Suite de automatización QA para GoalBet2026",
+  "main": "index.js",
+  "scripts": {
+    "test": "cypress run",
+    "test:open": "cypress open"
+  },
+  "keywords": ["qa", "cypress", "e2e", "testing", "goalbet2026"],
+  "author": "Antigravity QA Team",
+  "license": "MIT",
+  "devDependencies": {
+    "cypress": "^16.0.0",
+    "cypress-mochawesome-reporter": "^3.8.2"
+  }
+}

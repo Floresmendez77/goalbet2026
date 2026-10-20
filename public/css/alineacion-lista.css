@@ -1,0 +1,56 @@
+/* GoalBet2026 - Banner "Matchday" de partido.php (todas las clases con prefijo al-) */
+.al-wrap{position:relative;overflow:hidden;margin:1rem 0;border-radius:.75rem;border:1px solid var(--gb-border);
+  background:linear-gradient(135deg,var(--al-c1,#1e293b) 0%,var(--gb-bg-main,#0f172a) 85%);box-shadow:0 10px 25px rgba(0,0,0,.35);color:var(--gb-text-main,#f8fafc)}
+.al-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.6}
+.al-veil{position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(180deg,rgba(11,15,25,.88) 0%,rgba(15,23,42,.35) 38%,rgba(15,23,42,.45) 62%,rgba(11,15,25,.92) 100%)}
+.al-wrap>*:not(.al-bg):not(.al-veil){position:relative;z-index:1}
+
+/* Barra superior */
+.al-bar{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:.35rem 1rem;padding:.7rem 1rem;
+  background:rgba(11,15,25,.82);border-bottom:3px solid var(--al-c2,#f59e0b)}
+.al-title{font-size:.95rem;text-transform:uppercase;letter-spacing:.04em}
+.al-title span{color:var(--al-c2,#f59e0b);margin:0 .25rem}
+.al-when{display:flex;flex-direction:column;align-items:flex-end;text-align:right;font-size:.75rem;color:var(--gb-text-muted,#94a3b8);line-height:1.3}
+.al-comp{color:var(--gb-text-main,#f8fafc);font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+
+/* Escenario: local | competición | visitante */
+.al-stage{display:grid;grid-template-columns:1fr minmax(120px,.7fr) 1fr;align-items:center;gap:1rem;padding:1.5rem 1rem}
+.al-team{display:flex;flex-direction:column;align-items:center;gap:.6rem;min-width:0}
+.al-panel{width:100%;max-width:210px;padding:1.1rem .5rem;border-radius:.6rem;display:flex;justify-content:center;
+  background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);backdrop-filter:blur(3px)}
+.al-crest .crest{width:104px;height:104px}
+.al-crest .crest i{font-size:56px}
+.al-plate{width:100%;max-width:240px;text-align:center;padding:.4rem .6rem;border-radius:.3rem;line-height:1.15}
+.al-plate strong{display:block;font-size:1.05rem;text-transform:uppercase;letter-spacing:.03em}
+.al-role{display:block;font-size:.65rem;font-weight:700;letter-spacing:.14em;opacity:.85}
+.al-home .al-plate{background:#f8fafc;color:#0f172a}
+.al-away .al-plate{background:var(--al-c2,#f59e0b);color:#0b0f19}
+
+.al-center{display:flex;flex-direction:column;align-items:center;gap:.4rem;text-align:center}
+.al-logo{max-width:110px;max-height:90px;object-fit:contain;filter:drop-shadow(0 3px 8px rgba(0,0,0,.6))}
+.al-vs{font-weight:800;font-size:1.6rem;letter-spacing:.1em;color:var(--al-c2,#f59e0b);text-shadow:0 2px 8px rgba(0,0,0,.6)}
+.al-liga{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:.15rem .6rem;border-radius:50rem;
+  background:rgba(11,15,25,.7);border:1px solid var(--al-c2,#f59e0b)}
+
+/* Lista de titulares (solo si se activa) */
+.al-list{list-style:none;margin:.25rem 0 0;padding:.6rem .8rem;width:100%;max-width:240px;border-radius:.4rem;background:rgba(11,15,25,.72);font-size:.9rem}
+.al-list li{padding:.12rem 0;text-transform:uppercase;letter-spacing:.02em}
+.al-list em{font-style:normal;color:var(--gb-text-muted,#94a3b8);font-size:.75em}
+.al-num{display:inline-block;min-width:1.8em;text-align:right;margin-right:.45rem;font-weight:700;color:var(--al-c2,#f59e0b)}
+
+/* Pie */
+.al-foot{text-align:center;padding:.6rem 1rem;font-size:.8rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;background:rgba(11,15,25,.82)}
+.al-foot i{color:var(--al-c2,#f59e0b)}
+
+@media (max-width:767.98px){
+  .al-stage{grid-template-columns:1fr 1fr;gap:.75rem;padding:1rem .6rem}
+  .al-center{grid-column:1 / -1;grid-row:1;flex-direction:row;justify-content:center;gap:.8rem}
+  .al-logo{max-height:56px;max-width:80px}
+  .al-crest .crest{width:76px;height:76px}
+  .al-when{align-items:flex-start;text-align:left}
+}
+@media (max-width:575.98px){
+  .al-plate strong{font-size:.9rem}
+  .al-con-lista .al-stage{grid-template-columns:1fr}
+}

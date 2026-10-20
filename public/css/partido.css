@@ -1,0 +1,108 @@
+/* GoalBet2026 - Detalle de partido */
+.pd-head{background:linear-gradient(160deg,#1e293b,#0f172a);border:1px solid var(--gb-border);border-radius:1rem;padding:1.2rem 1.4rem}
+.pd-meta{color:var(--gb-text-muted);font-size:.88rem;display:flex;flex-wrap:wrap;gap:.4rem .6rem;align-items:center;margin-bottom:1rem}
+.pd-teams{display:grid;grid-template-columns:1fr auto 1fr;gap:1rem;align-items:start}
+.pd-team{text-align:center;min-width:0}
+.pd-team h2{font-size:1.15rem;font-weight:700;margin:.5rem 0 .3rem;overflow-wrap:anywhere}
+.pd-score{font-size:2.6rem;font-weight:800;line-height:1;padding-top:.8rem;white-space:nowrap}
+.pd-score span{color:var(--gb-text-muted);font-weight:400}
+.pd-vs{font-size:1.4rem;color:var(--gb-text-muted)}
+.pd-scorers{list-style:none;padding:0;margin:0;font-size:.82rem;color:var(--gb-text-muted)}
+.pd-venue{display:flex;gap:.9rem;align-items:center;margin-top:1.1rem;padding-top:1rem;border-top:1px solid var(--gb-border)}
+.pd-venue img{width:110px;height:68px;object-fit:cover;border-radius:.5rem}
+.pd-venue-label{font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;color:var(--gb-accent-gold)}
+.pd-admin{margin-top:.9rem;display:flex;gap:.8rem;align-items:center;flex-wrap:wrap}
+
+.pd-tabs{border-bottom:1px solid var(--gb-border)}
+.pd-tabs .nav-link{color:var(--gb-text-muted);border:0;border-bottom:2px solid transparent;background:transparent}
+.pd-tabs .nav-link:hover{color:#fff}
+.pd-tabs .nav-link.active{color:var(--gb-accent-gold);border-bottom-color:var(--gb-accent-gold);background:transparent}
+.pd-panel{background:var(--gb-bg-card);border:1px solid var(--gb-border);border-top:0;border-radius:0 0 1rem 1rem;padding:1.2rem}
+
+/* Cronología */
+.tl{position:relative}
+.tl::before{content:"";position:absolute;left:50%;top:0;bottom:0;width:2px;background:var(--gb-border);transform:translateX(-50%)}
+.tl-row{display:grid;grid-template-columns:1fr 64px 1fr;align-items:center;margin:.45rem 0;position:relative}
+.tl-min{justify-self:center;background:#0b0f19;border:1px solid var(--gb-border);border-radius:2rem;padding:.1rem .5rem;font-size:.78rem;font-weight:700;z-index:1;white-space:nowrap}
+.tl-left{display:flex;justify-content:flex-end;padding-right:.6rem}
+.tl-right{display:flex;justify-content:flex-start;padding-left:.6rem}
+.tl-card{display:flex;gap:.55rem;align-items:center;background:#0f172a;border:1px solid var(--gb-border);border-radius:.6rem;padding:.4rem .7rem;font-size:.9rem;max-width:100%}
+.tl-left .tl-card{flex-direction:row-reverse;text-align:right}
+.tl-gol{border-color:rgba(16,185,129,.6);background:rgba(16,185,129,.08)}
+.tl-ico{font-size:1.1rem;line-height:1}
+.tl-sub{font-size:.78rem;color:var(--gb-text-muted)}
+.tl-score{margin:0 .3rem;padding:.05rem .4rem;border-radius:.3rem;background:#0b0f19;font-weight:700;font-size:.8rem}
+.tl-break{position:relative;z-index:1;text-align:center;margin:.8rem auto;width:max-content;background:#0b0f19;border:1px solid var(--gb-border);border-radius:2rem;padding:.2rem 1rem;font-size:.78rem;color:var(--gb-text-muted);text-transform:uppercase;letter-spacing:.08em}
+
+/* Cancha */
+.pitch{position:relative;width:100%;aspect-ratio:4/5;border-radius:.8rem;overflow:hidden;background:repeating-linear-gradient(180deg,#15803d 0,#15803d 10%,#16a34a 10%,#16a34a 20%);border:2px solid #14532d}
+.pitch-lines{position:absolute;inset:3%;border:2px solid rgba(255,255,255,.55);border-radius:.3rem}
+.pitch-lines::before{content:"";position:absolute;left:0;right:0;top:50%;border-top:2px solid rgba(255,255,255,.55)}
+.pitch-lines::after{content:"";position:absolute;left:50%;top:50%;width:22%;aspect-ratio:1;border:2px solid rgba(255,255,255,.55);border-radius:50%;transform:translate(-50%,-50%)}
+.pl{position:absolute;transform:translate(-50%,-50%);text-align:center;width:22%;cursor:pointer;outline:none;transition:transform .15s}
+.pl:hover,.pl:focus-visible{transform:translate(-50%,-50%) scale(1.12);z-index:5}
+.pl:focus-visible .pl-dot{outline:3px solid var(--gb-accent-gold);outline-offset:2px;border-radius:10px}
+/* Camiseta: el color sale de --k1 (cuerpo) y --k2 (mangas/cuello), que partido.php pone en cada cancha (y en el arquero) */
+.pl-dot{--w:56px;position:relative;margin:0 auto;width:var(--w);height:calc(var(--w)*1.12);filter:drop-shadow(0 3px 4px rgba(0,0,0,.55))}
+.pl-shirt{position:absolute;left:0;right:0;bottom:0;height:80%}
+.pl-shirt svg{display:block;width:100%;height:100%;overflow:visible}
+.pl-shirt .k1{fill:var(--k1,#dc2626)}
+.pl-shirt .k2{fill:var(--k2,#fff)}
+.pl-shirt .kc{fill:none;stroke:var(--k2,#fff);stroke-width:3;stroke-linecap:round}
+.pl-shirt .ko{fill:none;stroke:rgba(0,0,0,.45);stroke-width:1.4;stroke-linejoin:round}
+.pl-n{position:absolute;left:0;right:0;bottom:13%;text-align:center;font-weight:800;font-size:calc(var(--w)*.3);line-height:1;color:var(--kt,#fff);z-index:1}
+/* Cabeza: foto del jugador si carga; si no, una silueta */
+.pl-head{position:absolute;top:0;left:50%;width:46%;aspect-ratio:1;transform:translateX(-50%);border-radius:50%;border:2px solid #fff;overflow:hidden;z-index:2;
+  background:radial-gradient(circle at 50% 36%,#e2e8f0 0 20%,transparent 21%),radial-gradient(ellipse at 50% 112%,#e2e8f0 0 48%,transparent 49%),#64748b}
+.pl-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top center;background:#cbd5e1}
+.pl-name{display:inline-block;margin-top:4px;max-width:100%;padding:1px 6px;border-radius:8px;background:rgba(0,0,0,.55);font-size:.7rem;font-weight:700;color:#fff;line-height:1.15;overflow-wrap:anywhere}
+.pl-out{font-size:.68rem;color:#fecaca;text-shadow:0 1px 3px #000;font-weight:700}
+.pl-badges{position:absolute;z-index:3;top:-10px;right:-16px;display:flex;gap:1px;font-size:.7rem;line-height:1}
+.pl-ico small{font-size:.5rem}
+.bench{list-style:none;padding:0;margin:0;font-size:.85rem}
+.bench li{display:flex;gap:.6rem;align-items:center;padding:.25rem 0;border-bottom:1px solid rgba(51,65,85,.6)}
+.bench li.in .bench-name{font-weight:700}
+.bench-n{width:1.8rem;text-align:right;color:var(--gb-text-muted)}
+.bench-name{flex:1;min-width:0}
+.bench-pos{color:var(--gb-text-muted);font-size:.75rem}
+
+/* Estadísticas */
+.st-row{margin-bottom:.9rem}
+.st-vals{display:flex;justify-content:space-between;font-size:.9rem;margin-bottom:.25rem}
+.st-vals span{color:var(--gb-text-muted)}
+.st-bar{display:flex;height:8px;border-radius:4px;overflow:hidden;gap:2px;background:#0b0f19}
+.st-a{background:#dc2626}.st-b{background:#e2e8f0}
+.st-legend{margin-top:1rem;font-size:.82rem;color:var(--gb-text-muted)}
+.st-legend span{display:inline-block;width:10px;height:10px;border-radius:50%;vertical-align:middle;margin-right:.2rem}
+.st-legend .home{background:#dc2626}.st-legend .away{background:#e2e8f0}
+.pd-table th{color:var(--gb-text-muted);font-weight:600;font-size:.78rem}
+
+@media (max-width:576px){
+  .pd-teams{grid-template-columns:1fr;gap:.4rem}
+  .pd-score{font-size:2.2rem;padding-top:0;text-align:center;order:-0}
+  .pd-venue img{display:none}
+  .tl-row{grid-template-columns:1fr 54px 1fr}
+  .tl-card{padding:.3rem .45rem;font-size:.8rem}
+  .pl-dot{--w:42px}
+  .pl-head{border-width:1.5px}
+  .pl-name{font-size:.6rem;padding:0 4px}
+}
+
+/* Filas clicables (banca, tabla) */
+.pd-click{cursor:pointer}
+.bench li.pd-click:hover,.pd-table tr.pd-click:hover>*{background:rgba(245,158,11,.08)}
+
+/* Ficha del jugador */
+.pd-modal .modal-content{background:var(--gb-bg-card);color:var(--gb-text-main);border:1px solid var(--gb-border);border-radius:1rem}
+.pd-modal .modal-header{border-bottom:1px solid var(--gb-border);gap:.9rem;align-items:center}
+.pd-m-photo{position:relative;flex:0 0 auto;width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.6rem;font-weight:800;border:3px solid #fff;overflow:hidden}
+.pd-m-photo.home{background:#dc2626;color:#fff}.pd-m-photo.away{background:#f8fafc;color:#0f172a}
+.pd-m-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top center;background:#cbd5e1;display:none}
+.pd-m-title h5{margin:0;font-weight:700}
+.pd-m-tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(105px,1fr));gap:.6rem}
+.pd-m-tile{background:#0f172a;border:1px solid var(--gb-border);border-radius:.7rem;padding:.55rem .4rem;text-align:center}
+.pd-m-tile strong{display:block;font-size:1.35rem;line-height:1.1}
+.pd-m-tile span{font-size:.72rem;color:var(--gb-text-muted)}
+.pd-m-acc{list-style:none;padding:0;margin:0}
+.pd-m-acc li{padding:.35rem 0;border-bottom:1px solid rgba(51,65,85,.6);font-size:.9rem}
+.pd-m-acc li b{display:inline-block;min-width:3.4rem;color:var(--gb-accent-gold)}

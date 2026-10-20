@@ -1,0 +1,45 @@
+:root {
+  --gb-dark: #0f172a;
+  --gb-accent: #ffc107;
+}
+
+body {
+  background-color: #f4f6f9;
+}
+
+.navbar-brand i {
+  filter: drop-shadow(0 0 4px rgba(255, 193, 7, .5));
+}
+
+.card-partido {
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+
+.card-partido:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .1);
+}
+
+.cuota-btn {
+  min-width: 90px;
+}
+
+.cuota-btn.selected {
+  background-color: var(--gb-accent) !important;
+  border-color: var(--gb-accent) !important;
+  color: #000 !important;
+  font-weight: 600;
+}
+
+.stat-card {
+  border-left: 4px solid var(--gb-accent);
+}
+
+.table-posiciones th, .table-posiciones td {
+  vertical-align: middle;
+}
+
+.badge-deporte {
+  font-size: .7rem;
+  letter-spacing: .03em;
+}

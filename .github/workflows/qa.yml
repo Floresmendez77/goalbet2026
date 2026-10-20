@@ -1,0 +1,98 @@
+name: Suite QA & Automation CI/CD - GoalBet2026
+
+on:
+  push:
+    branches: [ main, master, dev ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  qa-automation:
+    name: Running MySQL, PHP Server & Cypress Smoke Tests
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: goalbet2026
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      - name: Checkout Código Fuente
+        uses: actions/checkout@v4
+
+      - name: Configurar PHP 8.3
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: pdo, pdo_mysql, mysqli, json, session, mbstring
+          coverage: none
+
+      - name: Importar Base de Datos goalbet2026.sql y seed_demo.sql
+        run: |
+          mysql -h 127.0.0.1 -P 3306 -u root -proot goalbet2026 < database/goalbet2026.sql
+          mysql -h 127.0.0.1 -P 3306 -u root -proot goalbet2026 < database/seed_demo.sql
+          echo "Base de datos y datos demo importados exitosamente."
+
+      - name: Crear Configuración de Entorno seeder/.env
+        run: |
+          cat << 'EOF' > seeder/.env
+          DB_HOST=127.0.0.1
+          DB_PORT=3306
+          DB_NAME=goalbet2026
+          DB_USER=root
+          DB_PASS=root
+          APP_ENV=local
+          APP_URL=http://localhost:8000
+          APP_BASE_PATH=
+          APP_TZ=America/Tegucigalpa
+          CRON_SECRET_KEY=ci_test_cron_secret_32_characters_long
+          MONTO_MAXIMO_APUESTA=5000
+          API_FOOTBALL_KEY=
+          API_SPORTS_KEY=
+          EOF
+
+      - name: Sembrar Usuarios de Prueba QA
+        run: |
+          php seeder/create_qa_users.php
+
+      - name: Iniciar Servidor Web PHP Embebido en Background
+        run: |
+          php -S 127.0.0.1:8000 &
+          sleep 3
+          curl -I http://127.0.0.1:8000/login.php
+
+      - name: Configurar Node.js & Cypress en qa/
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: qa/package-lock.json
+
+      - name: Instalar Dependencias npm en qa/
+        run: |
+          cd qa
+          npm ci
+
+      - name: Ejecutar Smoke Test Automatizado con Cypress
+        run: |
+          cd qa
+          npx cypress run
+
+      - name: Subir Reporte Mochawesome & Screenshots como Artefactos de CI
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-qa-report-and-screenshots
+          path: |
+            qa/reports/
+            qa/cypress/screenshots/
+          retention-days: 14

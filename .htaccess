@@ -1,0 +1,70 @@
+# ==============================================================================
+# GoalBet2026 - Configuración de Seguridad Apache (.htaccess)
+# ==============================================================================
+
+# Evitar listar el contenido de directorios
+Options -Indexes
+
+# Página de inicio predeterminada
+DirectoryIndex index.php index2.php
+
+# ------------------------------------------------------------------------------
+# 1. BLOQUEO DE ARCHIVOS Y EXTENSIONES SENSIBLES
+# ------------------------------------------------------------------------------
+# Bloquear acceso a extensiones sensibles (.env, .sql, .log, .md, backups, scripts)
+<FilesMatch "(^#.*#|\.(bak|conf|dist|fla|in[ci]|log|psd|sh|sql|sw[op]|env.*|md))$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# Bloquear archivos y carpetas ocultas (que comienzan con punto)
+<FilesMatch "^\.">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# ------------------------------------------------------------------------------
+# 2. REGLAS MOD_REWRITE (Bloqueo de carpetas y forzado de HTTPS)
+# ------------------------------------------------------------------------------
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Bloquear acceso HTTP a carpetas privadas (devuelve 403 Forbidden)
+    RewriteRule ^(qa|seeder|database|tools|\.github|\.git)(/.*)?$ - [F,L,NC]
+
+    # Forzar HTTPS en producción (excluye localhost y 127.0.0.1 para desarrollo/CI)
+    RewriteCond %{HTTPS} !=on
+    RewriteCond %{HTTP:X-Forwarded-Proto} !https [NC]
+    RewriteCond %{HTTP_HOST} !^(localhost|127\.0\.0\.1)(:\d+)?$ [NC]
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+</IfModule>
+
+# ------------------------------------------------------------------------------
+# 3. CABECERAS DE SEGURIDAD HTTP
+# ------------------------------------------------------------------------------
+<IfModule mod_headers.c>
+    # Prevención de Clickjacking
+    Header always set X-Frame-Options "SAMEORIGIN"
+
+    # Prevención de MIME Type Sniffing
+    Header always set X-Content-Type-Options "nosniff"
+
+    # Política de Referrer estricta
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+    # HSTS: Strict-Transport-Security (solo si HTTPS está activo o tras reverse proxy con https)
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains" "expr=%{HTTPS} == 'on' || %{HTTP:X-Forwarded-Proto} == 'https'"
+
+    # Content Security Policy (CSP) adaptada a GoalBet2026 (Bootstrap CDN, Google Fonts, Fontshare / CDNs de escudos y estadios)
+    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com https://api.fontshare.com; font-src 'self' https://cdn.jsdelivr.net https://fonts.gstatic.com https://api.fontshare.com data:; img-src 'self' data: https:; connect-src 'self' https://cdn.jsdelivr.net https://api.fontshare.com; frame-ancestors 'self';"
+</IfModule>

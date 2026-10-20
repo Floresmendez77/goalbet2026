@@ -1,0 +1,154 @@
+/* Theme GoalBet2026 - Dark Sportsbook Premium */
+
+:root {
+  --gb-bg-main: #0f172a;
+  --gb-bg-card: #1e293b;
+  --gb-bg-hover: #334155;
+  --gb-text-main: #f8fafc;
+  --gb-text-muted: #94a3b8;
+  --gb-accent-gold: #f59e0b;
+  --gb-accent-gold-hover: #d97706;
+  --gb-success: #10b981;
+  --gb-danger: #ef4444;
+  --gb-info: #3b82f6;
+  --gb-border: #334155;
+}
+
+body {
+  background-color: var(--gb-bg-main) !important;
+  color: var(--gb-text-main) !important;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+}
+
+/* Navbar */
+.navbar-custom {
+  background-color: #0b0f19 !important;
+  border-bottom: 1px solid var(--gb-border);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+}
+
+.navbar-brand-custom {
+  font-size: 1.4rem;
+  color: #fff !important;
+  letter-spacing: 0.5px;
+}
+
+.balance-badge {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(16, 185, 129, 0.2) 100%);
+  border: 1px solid var(--gb-accent-gold);
+  color: var(--gb-accent-gold) !important;
+  padding: 0.4rem 0.9rem;
+  border-radius: 50rem;
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.15);
+  font-size: 0.95rem;
+}
+
+/* Cards & Containers */
+.card, .list-group-item, .modal-content {
+  background-color: var(--gb-bg-card) !important;
+  color: var(--gb-text-main) !important;
+  border: 1px solid var(--gb-border) !important;
+  border-radius: 0.75rem !important;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.3) !important;
+}
+
+.list-group-item-action:hover {
+  background-color: var(--gb-bg-hover) !important;
+  color: #fff !important;
+}
+
+/* Odds Buttons */
+.cuota-btn {
+  background-color: #0f172a !important;
+  border: 1px solid #475569 !important;
+  color: var(--gb-text-main) !important;
+  padding: 0.75rem 1.25rem !important;
+  border-radius: 0.5rem !important;
+  transition: all 0.2s ease-in-out !important;
+  text-align: center;
+}
+
+.cuota-btn:hover {
+  border-color: var(--gb-accent-gold) !important;
+  color: var(--gb-accent-gold) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
+}
+
+.cuota-btn.active, .cuota-btn:active {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
+  color: #000 !important;
+  border-color: var(--gb-accent-gold) !important;
+  font-weight: bold;
+}
+
+/* Form Controls */
+.form-control, .form-select {
+  background-color: #0f172a !important;
+  border: 1px solid var(--gb-border) !important;
+  color: var(--gb-text-main) !important;
+  border-radius: 0.5rem !important;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: var(--gb-accent-gold) !important;
+  box-shadow: 0 0 0 0.25rem rgba(245, 158, 11, 0.25) !important;
+}
+
+.form-control::placeholder {
+  color: var(--gb-text-muted) !important;
+}
+
+/* Buttons */
+.btn-warning {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
+  border: none !important;
+  color: #000 !important;
+  font-weight: 600 !important;
+  border-radius: 0.5rem !important;
+  transition: all 0.2s ease !important;
+}
+
+.btn-warning:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4) !important;
+}
+
+/* Tables */
+.table {
+  color: var(--gb-text-main) !important;
+  background-color: transparent !important;
+}
+
+.table th {
+  background-color: #0b0f19 !important;
+  color: var(--gb-text-muted) !important;
+  border-bottom: 2px solid var(--gb-border) !important;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.5px;
+}
+
+.table td {
+  border-bottom: 1px solid var(--gb-border) !important;
+  background-color: transparent !important;
+  color: var(--gb-text-main) !important;
+}
+
+.table-hover tbody tr:hover td {
+  background-color: rgba(255, 255, 255, 0.03) !important;
+}
+
+/* Badges */
+.badge-deporte {
+  background-color: #0f172a !important;
+  border: 1px solid var(--gb-border) !important;
+  color: var(--gb-accent-gold) !important;
+  font-weight: 600;
+  padding: 0.35em 0.65em;
+}
+
+.text-muted {
+  color: var(--gb-text-muted) !important;
+}

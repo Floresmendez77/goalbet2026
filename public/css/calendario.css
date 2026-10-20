@@ -1,0 +1,141 @@
+/* GoalBet2026 - Calendario de partidos + equipo favorito */
+:root{
+  --cal-win:#10b981; --cal-draw:#f59e0b; --cal-loss:#ef4444; --cal-live:#3b82f6;
+}
+.crest-xs{width:16px;height:16px}.crest-xs i{font-size:10px}
+
+/* Selector Calendario | Lista */
+.cal-toggle{display:inline-flex;background:#0b0f19;border:1px solid var(--gb-border);border-radius:.6rem;padding:3px;gap:2px}
+.cal-toggle-btn{display:inline-flex;align-items:center;gap:.4rem;padding:.35rem .9rem;border-radius:.45rem;color:var(--gb-text-muted);text-decoration:none;font-size:.88rem;font-weight:600}
+.cal-toggle-btn:hover{color:#fff}
+.cal-toggle-btn.active{background:linear-gradient(135deg,#f59e0b,#d97706);color:#000}
+
+/* Chips de equipos */
+.cal-chips{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+.cal-chip,.cal-chip-wrap{display:inline-flex;align-items:center}
+.cal-chip{gap:.45rem;padding:.35rem .8rem;border-radius:2rem;border:1px solid var(--gb-border);background:#0b0f19;color:var(--gb-text-main);font-size:.85rem;font-weight:600;text-decoration:none;cursor:pointer;transition:border-color .15s,background .15s}
+.cal-chip:hover{border-color:var(--gb-accent-gold);color:#fff}
+.cal-chip.active{background:rgba(245,158,11,.16);border-color:var(--gb-accent-gold);color:var(--gb-accent-gold)}
+.cal-chip-wrap{border:1px solid var(--gb-border);background:#0b0f19;border-radius:2rem;padding-right:.25rem;transition:border-color .15s}
+.cal-chip-wrap .cal-chip{border:0;background:transparent}
+.cal-chip-wrap:hover{border-color:var(--gb-accent-gold)}
+.cal-chip-wrap.active{background:rgba(245,158,11,.16);border-color:var(--gb-accent-gold)}
+.cal-chip-wrap.active .cal-chip{color:var(--gb-accent-gold)}
+.cal-chip-x{border:0;background:transparent;color:var(--gb-text-muted);width:22px;height:22px;border-radius:50%;line-height:1;font-size:1.1rem;padding:0;cursor:pointer}
+.cal-chip-x:hover{background:rgba(239,68,68,.2);color:#fca5a5}
+.cal-chip-add{border-style:dashed;color:var(--gb-accent-gold)}
+.cal-select{width:auto;min-width:11rem}
+
+/* Próximo partido */
+.cal-next{background:linear-gradient(135deg,rgba(245,158,11,.12),rgba(30,41,59,.9));border:1px solid rgba(245,158,11,.35);border-radius:.9rem;padding:.9rem 1.1rem;margin-bottom:1rem}
+.cal-next-label{font-size:.78rem;color:var(--gb-text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem}
+.cal-next-label strong{color:var(--gb-accent-gold)}
+.cal-next-body{display:flex;flex-wrap:wrap;align-items:center;gap:1rem 1.5rem}
+.cal-next-teams{display:flex;align-items:center;gap:.7rem;flex-wrap:wrap}
+.cal-next-name{font-weight:700}
+.cal-next-when{display:flex;flex-direction:column;line-height:1.25}
+.cal-next-when span{font-size:.85rem;color:var(--gb-text-muted)}
+.cal-next-actions{display:flex;gap:.5rem;margin-left:auto}
+
+/* Caja del calendario */
+.cal-box{background:var(--gb-bg-card);border:1px solid var(--gb-border);border-radius:.9rem;padding:1rem;box-shadow:0 10px 25px rgba(0,0,0,.3)}
+.cal-head{display:flex;align-items:center;gap:.6rem;margin-bottom:.8rem}
+.cal-title{flex:1;text-align:center;line-height:1.1}
+.cal-title h2{font-size:1.5rem;font-weight:800;margin:0;letter-spacing:.02em;text-transform:uppercase}
+.cal-title h2 span{color:var(--gb-accent-gold);font-weight:700}
+.cal-title small{color:var(--gb-text-muted);font-size:.72rem}
+.cal-nav{width:38px;height:38px;display:inline-flex;align-items:center;justify-content:center;border-radius:.6rem;background:#0b0f19;border:1px solid var(--gb-border);color:var(--gb-text-main);text-decoration:none}
+.cal-nav:hover{border-color:var(--gb-accent-gold);color:var(--gb-accent-gold)}
+.cal-hoy{padding:.4rem .9rem;border-radius:.6rem;border:1px solid var(--gb-accent-gold);color:var(--gb-accent-gold);font-weight:700;font-size:.85rem;text-decoration:none}
+.cal-hoy:hover{background:var(--gb-accent-gold);color:#000}
+
+.cal-stats{display:flex;flex-wrap:wrap;gap:.4rem .9rem;font-size:.82rem;color:var(--gb-text-muted);margin-bottom:.8rem;padding:.45rem .7rem;background:#0b0f19;border-radius:.6rem}
+.cal-stats b{color:var(--gb-text-main)}
+.cal-stats .s-g b{color:var(--cal-win)}.cal-stats .s-e b{color:var(--cal-draw)}.cal-stats .s-p b{color:var(--cal-loss)}
+
+/* Cuadrícula */
+.cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.cal-dow{text-align:center;font-size:.72rem;font-weight:700;color:var(--gb-text-muted);text-transform:uppercase;letter-spacing:.08em;padding:.35rem 0}
+.cal-day{position:relative;display:flex;flex-direction:column;gap:3px;min-height:100px;padding:.35rem .35rem .4rem;border-radius:.55rem;background:#0f172a;border:1px solid #1e293b;text-decoration:none;color:var(--gb-text-main);overflow:hidden;transition:border-color .12s,transform .12s}
+.cal-day:hover{border-color:#475569;transform:translateY(-1px)}
+.cal-day.out{opacity:.38}
+.cal-day.today{border-color:var(--gb-accent-gold);box-shadow:inset 0 0 0 1px rgba(245,158,11,.35)}
+.cal-day.today .cal-num{background:var(--gb-accent-gold);color:#000}
+.cal-day.selected{background:#16223a;border-color:#60a5fa;box-shadow:0 0 0 2px rgba(96,165,250,.35)}
+.cal-num{align-self:flex-start;min-width:22px;height:22px;padding:0 5px;border-radius:2rem;display:inline-flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:700;color:var(--gb-text-muted)}
+.cal-day.has .cal-num{color:var(--gb-text-main)}
+.cal-count{position:absolute;top:.35rem;right:.35rem;min-width:20px;height:20px;border-radius:2rem;background:rgba(245,158,11,.2);color:var(--gb-accent-gold);font-size:.7rem;font-weight:800;display:inline-flex;align-items:center;justify-content:center;padding:0 5px}
+
+/* Partido de mi equipo dentro de la celda */
+.cal-pill{display:flex;align-items:center;gap:.3rem;padding:3px 4px;border-radius:.45rem;background:#1e293b;border-left:3px solid #475569;min-width:0}
+.cal-pill .crest{width:20px;height:20px}
+.cal-pill-txt{display:flex;align-items:center;gap:.25rem;font-size:.72rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.cal-ha{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:4px;background:rgba(255,255,255,.1);font-size:.62rem;font-weight:800;color:var(--gb-text-muted)}
+.cal-pill.res-G{border-left-color:var(--cal-win);background:rgba(16,185,129,.14)}
+.cal-pill.res-E{border-left-color:var(--cal-draw);background:rgba(245,158,11,.12)}
+.cal-pill.res-P{border-left-color:var(--cal-loss);background:rgba(239,68,68,.14)}
+.cal-pill.res-live{border-left-color:var(--cal-live);background:rgba(59,130,246,.18)}
+.cal-pill.res-pend{border-left-color:#64748b}
+
+/* Líneas compactas (modo "todos los partidos") */
+.cal-line{display:flex;align-items:center;justify-content:center;gap:.3rem;font-size:.7rem;color:var(--gb-text-muted);background:#1e293b;border-radius:.4rem;padding:2px 3px}
+.cal-line-t{font-weight:700;color:var(--gb-text-main);white-space:nowrap}
+.cal-more{font-size:.68rem;color:var(--gb-text-muted);text-align:center}
+
+.cal-legend{display:flex;flex-wrap:wrap;gap:.4rem 1rem;margin-top:.8rem;font-size:.75rem;color:var(--gb-text-muted)}
+.cal-legend .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px;background:#64748b}
+.cal-legend .dot.res-G{background:var(--cal-win)}.cal-legend .dot.res-E{background:var(--cal-draw)}
+.cal-legend .dot.res-P{background:var(--cal-loss)}
+
+/* Panel lateral */
+.cal-side{background:var(--gb-bg-card);border:1px solid var(--gb-border);border-radius:.9rem;padding:1rem;box-shadow:0 10px 25px rgba(0,0,0,.3);position:sticky;top:78px}
+.cal-side-head{margin-bottom:.8rem;padding-bottom:.7rem;border-bottom:1px solid var(--gb-border)}
+.cal-side-head small{color:var(--gb-accent-gold);text-transform:uppercase;letter-spacing:.08em;font-weight:700;font-size:.72rem}
+.cal-side-head h3{margin:.1rem 0 0;font-size:1.15rem;font-weight:800}
+.cal-side-list{display:flex;flex-direction:column;gap:.75rem;max-height:70vh;overflow-y:auto;padding-right:2px}
+.cal-card{background:#0f172a;border:1px solid #1e293b;border-left:4px solid #475569;border-radius:.7rem;padding:.8rem}
+.cal-card.res-G{border-left-color:var(--cal-win)}.cal-card.res-E{border-left-color:var(--cal-draw)}.cal-card.res-P{border-left-color:var(--cal-loss)}
+.cal-card .match-top{margin-bottom:.7rem}
+.cal-card .match-teams{margin-bottom:.7rem}
+.cal-res-chip{display:inline-block;margin-bottom:.6rem;padding:.15rem .7rem;border-radius:2rem;font-size:.75rem;font-weight:800}
+.cal-res-chip.res-G{background:rgba(16,185,129,.18);color:#6ee7b7}
+.cal-res-chip.res-E{background:rgba(245,158,11,.18);color:#fcd34d}
+.cal-res-chip.res-P{background:rgba(239,68,68,.18);color:#fca5a5}
+.cal-empty{text-align:center;color:var(--gb-text-muted);padding:1.5rem .5rem}
+.cal-empty i{font-size:2.2rem;opacity:.6}
+
+/* Modal elegir equipo */
+.cal-sport-chips{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.7rem}
+.cal-sport-chip{border:1px solid var(--gb-border);background:#0b0f19;color:var(--gb-text-muted);border-radius:2rem;padding:.2rem .7rem;font-size:.78rem;font-weight:600;cursor:pointer}
+.cal-sport-chip.active{background:rgba(245,158,11,.16);border-color:var(--gb-accent-gold);color:var(--gb-accent-gold)}
+.cal-fav-list{display:flex;flex-direction:column;gap:.35rem;max-height:46vh;overflow-y:auto}
+.cal-fav-item{display:flex;align-items:center;gap:.7rem;width:100%;text-align:left;border:1px solid var(--gb-border);background:#0f172a;color:var(--gb-text-main);border-radius:.6rem;padding:.45rem .7rem;cursor:pointer}
+.cal-fav-item:hover{border-color:var(--gb-accent-gold);background:#16223a}
+.cal-fav-txt{display:flex;flex-direction:column;flex:1;min-width:0;line-height:1.2}
+.cal-fav-txt small{color:var(--gb-text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cal-fav-item .bi-plus-circle{color:var(--gb-accent-gold);font-size:1.2rem}
+
+/* Pantallas chicas: celdas más compactas, solo escudo + color del resultado */
+@media (max-width:991.98px){.cal-side{position:static}.cal-side-list{max-height:none}}
+@media (max-width:575.98px){
+  .cal-box{padding:.6rem}
+  .cal-grid{gap:2px}
+  .cal-day{min-height:62px;padding:.2rem;align-items:center}
+  .cal-num{align-self:center;font-size:.7rem}
+  .cal-pill{justify-content:center;padding:2px;border-left-width:0;border-bottom:3px solid #475569}
+  .cal-pill.res-G{border-bottom-color:var(--cal-win)}.cal-pill.res-E{border-bottom-color:var(--cal-draw)}
+  .cal-pill.res-P{border-bottom-color:var(--cal-loss)}.cal-pill.res-live{border-bottom-color:var(--cal-live)}
+  .cal-pill-txt,.cal-more,.cal-line-t{display:none}
+  .cal-pill .crest{width:20px;height:20px}
+  .cal-line{padding:1px}
+  .cal-count{position:static}
+  .cal-title h2{font-size:1.15rem}
+  .cal-next-actions{margin-left:0}
+}
+
+/* Panel lateral angosto: que los nombres largos no se corten */
+.cal-card .match-teams{grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:.35rem}
+.cal-card .team{min-width:0}
+.cal-card .team-name{font-size:.8rem;overflow-wrap:break-word;hyphens:auto}
+.cal-card .match-center{min-width:48px}
+.cal-card .match-score{font-size:1.35rem}
