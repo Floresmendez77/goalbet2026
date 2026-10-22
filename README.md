@@ -178,3 +178,83 @@ GoalBet envía correos reales con PHPMailer (incluido en `includes/PHPMailer/`, 
 - Errores 500: `includes/errores.php` muestra una página amable con un código de incidente; el detalle queda en `seeder/logs/php_errors.log` (en `APP_ENV=local` también se ve en pantalla).
 - `ayuda.php`: preguntas frecuentes y formulario de contacto que llega por correo a `CONTACT_EMAIL` (o `MAIL_FROM` si no está definido). Máximo 5 mensajes por hora por IP.
 - Si un administrador desactiva una cuenta, el usuario con sesión abierta es sacado en su próxima petición (`requerir_login()`).
+
+## ⚡ Tiempo real (partidos de fútbol)
+
+### Principio de diseño
+
+**Solo UN proceso (el cron) consulta a ESPN. Los usuarios NUNCA llaman a ESPN**: leen de nuestra base de datos mediante un endpoint JSON liviano. Así el costo de la API depende de cuántos partidos hay en vivo, no de cuántos usuarios hay conectados.
+
+```
+ESPN ──(1 consulta/min, solo si hay partidos activos)──> cron/live_cron.php ──> base de datos
+                                                                                   │
+navegadores ──(sondeo cada 15-60 s, con ETag)──> api/live.php ─────────────────────┘
+```
+
+### Etapas
+
+| Etapa | Qué hace | Archivo |
+|---|---|---|
+| 1 | Cron en vivo: sale de inmediato si no hay partidos activos, con `flock` y una sola sincronización por liga | `cron/live_cron.php` |
+| 2 | Minuto actual, marcador y estado «en_curso» + insignia «EN VIVO 67'» | `seeder/Seeders/EspnSeeder.php`, `badge_en_vivo()` |
+| 3 | Endpoint JSON de solo lectura (marcador, minuto, goles con asistente, tarjetas, estado) | `api/live.php`, `includes/live_data.php` |
+| 4 | _(pendiente)_ JavaScript que consulta el endpoint y actualiza la pantalla | |
+
+### Programar el cron (cada minuto)
+
+- Linux / AlwaysData: `* * * * * /usr/bin/php /ruta/al/proyecto/cron/live_cron.php >> /ruta/al/proyecto/seeder/logs/live_cron.out 2>&1`
+- Windows (MAMP): Programador de tareas, cada 1 minuto: `C:\MAMP\bin\php\php8.3.1\php.exe C:\MAMP\htdocs\...\cron\live_cron.php`
+
+Un partido está «activo» si está `en_curso` o `programado` con inicio entre −4 h y +15 min (todo en UTC). Si no hay ninguno, el cron no hace ninguna llamada HTTP.
+
+### API: `GET api/live.php`
+
+Requiere sesión iniciada (responde `401` en JSON, no redirige). Solo lee de la base de datos.
+
+| Parámetro | Descripción |
+|---|---|
+| `ids` | Ids de partido separados por coma (máx. 50). Obligatorio. |
+| `eventos=1` | Agrega la línea de tiempo. Solo con **un** partido. |
+
+```json
+{
+  "ok": true,
+  "poll": 15,
+  "partidos": {
+    "123": {
+      "estado": "en_curso", "en_vivo": true, "minuto": "67'",
+      "marcador": { "local": 2, "visita": 1 },
+      "inicio_utc": "2026-10-22T20:00:00Z", "poll": 15,
+      "eventos": [
+        { "id": 1107, "orden": 3, "minuto": "55'", "tipo": "gol", "lado": "visita",
+          "jugador": "James Justin", "asistente": "Gabriel Gudmundsson",
+          "marcador": { "local": 0, "visita": 1 } }
+      ]
+    }
+  },
+  "v": "e75a606003e3b3f116fa", "ahora": "2026-10-22T21:05:11Z"
+}
+```
+
+- `poll`: cada cuántos **segundos** conviene volver a preguntar (15 en vivo, 30 en la ventana del cron, 60 si falta menos de 2 h). `null` = no hace falta seguir preguntando (finalizado o falta mucho).
+- **ETag**: si nada cambió, responde `304` sin cuerpo (enviar `If-None-Match`).
+- Tipos de evento: `gol`, `gol_penal`, `autogol`, `penal_fallado`, `amarilla`, `roja`, `segunda_amarilla`, `cambio` (`entra` / `sale`), `var`, `medio_tiempo`.
+- Errores (JSON): `401 no_autenticado | cuenta_desactivada`, `400 ids_requeridos | ids_invalidos | demasiados_ids | eventos_requiere_un_solo_partido`, `405 metodo_no_permitido`, `500 error_interno` (con `codigo` de incidente que aparece en `seeder/logs/php_errors.log`).
+
+### Probar sin esperar un partido real
+
+```sql
+-- 1) Elegí un partido de fútbol programado
+SELECT id, fecha_partido FROM partidos WHERE estado = 'programado' AND id_deporte = 1 ORDER BY fecha_partido LIMIT 5;
+-- 2) Ponelo "en vivo" (cambiá 123 por su id)
+UPDATE partidos SET estado = 'en_curso', marcador_local = 1, marcador_visita = 0, minuto_actual = '34''' WHERE id = 123;
+-- 3) Agregale un gol con asistencia
+INSERT INTO partido_eventos (id_partido, espn_event_id, orden, minuto, tipo, id_equipo, jugador, jugador2, marcador_local, marcador_visita)
+SELECT id, 'TEST1', 1, '34''', 'gol', id_equipo_local, 'Jugador Prueba', 'Asistente Prueba', 1, 0 FROM partidos WHERE id = 123;
+-- 4) Con sesión iniciada abrí:  /api/live.php?ids=123&eventos=1
+-- 5) Dejalo como estaba
+DELETE FROM partido_eventos WHERE id_partido = 123 AND espn_event_id = 'TEST1';
+UPDATE partidos SET estado = 'programado', marcador_local = NULL, marcador_visita = NULL, minuto_actual = NULL WHERE id = 123;
+```
+
+> No pases el partido de prueba a `finalizado`: el trigger liquida las apuestas reales de ese partido.
