@@ -193,7 +193,7 @@ $statsV = $hayDatos ? (json_decode((string) $det['stats_visita'], true) ?: []) :
     <span class="badge bg-dark badge-deporte"><?= e($p['deporte']) ?></span>
     <?= e($p['liga'] ?? 'Amistoso') ?><?= $p['jornada'] ? ' · Jornada ' . (int) $p['jornada'] : '' ?>
     · <?= e(fecha_partido_legible($p['fecha_partido'], 'd/m/Y h:i A')) ?> <small>(<?= e(app_tz_etiqueta()) ?>)</small>
-    <?= badge_estado($p['estado']) ?>
+    <?= $p['estado'] === 'en_curso' ? badge_en_vivo($p['minuto_actual'] ?? null) : badge_estado($p['estado']) ?>
   </div>
   <div class="pd-teams">
     <div class="pd-team">

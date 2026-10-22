@@ -210,9 +210,12 @@ class EspnSeeder
         $estadoTipo = $evento['status']['type'] ?? [];
         $estadoLocal = $this->mapearEstado($estadoTipo);
 
+        // En juego (solo fútbol): ESPN state 'in'. Se maneja más abajo (minuto en vivo).
+        $enVivo = ($estadoTipo['state'] ?? '') === 'in' && $fuente === 'espn-futbol';
+
         // Si no es un desenlace real, solo procesamos si crearNuevos es true y el evento está programado
         if (!in_array($estadoLocal, ['finalizado', 'pospuesto', 'cancelado'], true)) {
-            if (!$crearNuevos || $estadoLocal !== 'programado') {
+            if (!$enVivo && (!$crearNuevos || $estadoLocal !== 'programado')) {
                 return;
             }
         }
@@ -272,6 +275,31 @@ class EspnSeeder
             return;
         }
 
+        // Partido en juego que ya existe en la base: minuto, marcador y estado en vivo.
+        // Solo desde programado/en_curso (nunca pisa un partido ya cerrado o pospuesto por un admin).
+        // No suma a $this->actualizados: no cambia la tabla de posiciones.
+        if ($enVivo && $idPartido !== null) {
+            $minuto = $this->minutoEnVivo($evento['status'] ?? []);
+            if ($aplicar) {
+                $stmt = $this->pdo->prepare(
+                    "UPDATE partidos SET estado = 'en_curso', marcador_local = :ml, marcador_visita = :mv, minuto_actual = :min
+                     WHERE id = :id AND estado IN ('programado', 'en_curso')"
+                );
+                $stmt->execute([
+                    ':ml'  => (int)($local['score'] ?? 0),
+                    ':mv'  => (int)($visita['score'] ?? 0),
+                    ':min' => $minuto,
+                    ':id'  => $idPartido,
+                ]);
+                $this->vincularSiHaceFalta($fuente, 'partido', $idPartido, $espnEventId);
+            }
+            $this->logger->info(
+                "[VIVO] partido #$idPartido " . ($minuto ?? 's/min') . ' ' .
+                (int)($local['score'] ?? 0) . '-' . (int)($visita['score'] ?? 0) . " [espn:$espnEventId]"
+            );
+            return;
+        }
+
         if ($idPartido === null) {
             if (!$crearNuevos) {
                 $this->logger->skipped(
@@ -316,7 +344,7 @@ class EspnSeeder
         // deliberado de Repository::upsertPartido, ver docblock de la clase).
         if ($aplicar) {
             $stmt = $this->pdo->prepare(
-                'UPDATE partidos SET marcador_local = :ml, marcador_visita = :mv, estado = :estado WHERE id = :id'
+                'UPDATE partidos SET marcador_local = :ml, marcador_visita = :mv, estado = :estado, minuto_actual = NULL WHERE id = :id'
             );
             $stmt->execute([
                 ':ml' => $marcadorLocal,
@@ -493,6 +521,30 @@ class EspnSeeder
         $stmt = $this->pdo->prepare('SELECT tiene_empate FROM deportes WHERE id = ?');
         $stmt->execute([$idDeporte]);
         return (bool)$stmt->fetchColumn();
+    }
+
+    /**
+     * Minuto en vivo para mostrar ("67'", "90+4'", "Descanso", "Penales") desde el
+     * `status` del scoreboard de ESPN (displayClock + periodo). NULL si no hay dato fiable.
+     */
+    private function minutoEnVivo(array $status): ?string
+    {
+        $nombre = strtoupper((string)($status['type']['name'] ?? ''));
+        $periodo = (int)($status['period'] ?? 0);
+
+        if (str_contains($nombre, 'HALFTIME')) {
+            return 'Descanso';
+        }
+        if (str_contains($nombre, 'SHOOTOUT') || $periodo >= 5) {
+            return 'Penales';
+        }
+
+        // displayClock llega como "67'" o "90'+4'"; se normaliza a "67'" / "90+4'"
+        $reloj = str_replace(["'", ' '], '', (string)($status['displayClock'] ?? ''));
+        if (preg_match('/^\d{1,3}(\+\d{1,2})?$/', $reloj) !== 1 || $reloj === '0') {
+            return null;
+        }
+        return $reloj . "'";
     }
 
     private function mapearEstado(array $statusType): string

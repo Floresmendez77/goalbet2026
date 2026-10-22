@@ -147,7 +147,7 @@ require __DIR__ . '/includes/header.php';
         <div class="card-body">
           <div class="match-top">
             <span class="match-liga"><span class="badge bg-dark badge-deporte"><?= e($p['deporte']) ?></span> <?= e($p['liga'] ?? 'Amistoso') ?></span>
-            <?= badge_estado($p['estado']) ?>
+            <?= $p['estado'] === 'en_curso' ? badge_en_vivo($p['minuto_actual'] ?? null) : badge_estado($p['estado']) ?>
           </div>
 
           <div class="match-teams">
@@ -156,7 +156,7 @@ require __DIR__ . '/includes/header.php';
               <span class="team-name"><?= e($p['equipo_local']) ?></span>
             </div>
             <div class="match-center">
-              <?php if ($p['estado'] === 'finalizado'): ?>
+              <?php if ($p['estado'] === 'finalizado' || ($p['estado'] === 'en_curso' && $p['marcador_local'] !== null)): ?>
                 <span class="match-score"><?= (int) $p['marcador_local'] ?> - <?= (int) $p['marcador_visita'] ?></span>
               <?php else: ?>
                 <span class="match-vs">VS</span>

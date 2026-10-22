@@ -161,6 +161,15 @@ function badge_estado(string $estado): string
 }
 
 /**
+ * Insignia "EN VIVO 67'" para partidos en curso. $minuto puede ser null (solo "EN VIVO").
+ */
+function badge_en_vivo(?string $minuto): string
+{
+    $texto = 'EN VIVO' . (($minuto !== null && $minuto !== '') ? ' ' . $minuto : '');
+    return '<span class="badge bg-danger">' . e($texto) . '</span>';
+}
+
+/**
  * Escudo de un equipo. Si no hay URL (o la imagen no carga) queda un escudo genérico.
  * $size: 'sm' (24px) | 'md' (40px) | 'lg' (56px)
  */
