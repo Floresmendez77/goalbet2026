@@ -167,3 +167,7 @@ GoalBet envía correos reales con PHPMailer (incluido en `includes/PHPMailer/`, 
 ### 👤 Perfil de usuario
 
 `perfil.php` (menú del usuario → «Mi perfil»): editar nombre/apellido/teléfono, cambiar contraseña pidiendo la actual (con límite de intentos), cambiar correo con confirmación por enlace al correo nuevo (y aviso al anterior) y activar/desactivar los avisos por correo. Requiere importar `database/migracion_fase2_perfil.sql`.
+
+### 📄 Términos y privacidad
+
+`terminos.php` y `privacidad.php` (públicas, enlazadas desde el registro y el pie de página). Al registrarse se guarda la versión aceptada (`usuarios.terminos_version` y `terminos_aceptados_at`). Si cambiás los textos, subí `TERMINOS_VERSION` y `LEGAL_FECHA` en `includes/legal.php`. Requiere importar `database/migracion_fase3_legal.sql` y definir `CONTACT_EMAIL` en `seeder/.env`.
