@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/includes/bootstrap.php';
+require_once __DIR__ . '/includes/legal.php';
 
 if (esta_logueado()) {
     redirect('/dashboard.php');
@@ -34,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errores[] = 'Las contraseñas no coinciden.';
     }
     if (empty($_POST['mayor_edad'])) {
-        $errores[] = 'Debes confirmar que eres mayor de 18 años y aceptas las políticas de juego responsable.';
+        $errores[] = 'Debes confirmar que eres mayor de 18 años y aceptar los Términos y Condiciones, la Política de Privacidad y las políticas de juego responsable.';
     }
 
     if (!$errores) {
@@ -47,8 +48,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!$errores) {
         $stmt = db()->prepare(
-            'INSERT INTO usuarios (nombre, apellido, username, email, password, saldo, rol)
-             VALUES (?, ?, ?, ?, ?, 0.00, "cliente")'
+            'INSERT INTO usuarios (nombre, apellido, username, email, password, saldo, rol, email_verificado, terminos_version, terminos_aceptados_at)
+             VALUES (?, ?, ?, ?, ?, 0.00, "cliente", 0, ?, NOW())'
         );
         $stmt->execute([
             $valores['nombre'],
@@ -56,9 +57,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $valores['username'],
             $valores['email'],
             password_hash($password, PASSWORD_DEFAULT),
+            TERMINOS_VERSION,
         ]);
+        $nuevo = [
+            'id'       => (int) db()->lastInsertId(),
+            'nombre'   => $valores['nombre'],
+            'username' => $valores['username'],
+            'email'    => $valores['email'],
+        ];
 
-        flash('success', 'Cuenta creada. Ya podés iniciar sesión.');
+        if (email_verificacion_requerida()) {
+            $envio = enviar_verificacion_a_usuario($nuevo);
+            if ($envio['enviado']) {
+                flash('success', 'Cuenta creada. Te enviamos un correo a ' . $nuevo['email'] . ' para confirmar tu email; sin confirmarlo no vas a poder iniciar sesión.');
+            } else {
+                flash('warning', 'Cuenta creada, pero no pudimos enviar el correo de confirmación. Pedí uno nuevo desde la opción «Reenviar correo de confirmación».');
+            }
+            // En local sin SMTP el correo queda en seeder/logs/mail_dev.log; mostramos el enlace para poder probar.
+            if (Env::get('APP_ENV') === 'local' && !mail_configurado()) {
+                flash('info', 'Modo local: enlace de confirmación → ' . $envio['enlace']);
+            }
+        } else {
+            correo_bienvenida($nuevo);
+            flash('success', 'Cuenta creada. Ya podés iniciar sesión.');
+        }
         redirect('/login.php');
     }
 }
@@ -114,7 +136,7 @@ require __DIR__ . '/includes/header.php';
           <div class="form-check mb-4">
             <input class="form-check-input" type="checkbox" name="mayor_edad" id="mayor_edad" required data-cy="check-mayor-edad">
             <label class="form-check-label small text-muted" for="mayor_edad">
-              <span class="badge bg-danger me-1">+18</span> Confirmo que soy mayor de 18 años y acepto las políticas de <strong>juego responsable</strong>. El juego compulsivo es perjudicial para la salud.
+              <span class="badge bg-danger me-1">+18</span> Confirmo que soy mayor de 18 años, leí y acepto los <a href="<?= APP_URL ?>/terminos.php" target="_blank" rel="noopener">Términos y Condiciones</a> y la <a href="<?= APP_URL ?>/privacidad.php" target="_blank" rel="noopener">Política de Privacidad</a>, y las políticas de <strong>juego responsable</strong>. El juego compulsivo es perjudicial para la salud.
             </label>
           </div>
           <button type="submit" class="btn btn-warning w-100 fw-semibold" data-cy="btn-register">Crear cuenta</button>

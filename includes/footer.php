@@ -1,10 +1,15 @@
 </main>
 
-<footer class="border-top py-4 mt-5 text-center text-muted small">
+<footer class="gb-footer py-4 mt-5 text-center text-muted small">
   <div class="container">
     <div class="mb-2">
       <span class="badge bg-danger me-2">+18</span>
       <span><strong>Juego Responsable</strong>: Prohibida la participación de menores de 18 años. El juego con apuestas puede ser adictivo. Jugá con moderación y responsabilidad.</span>
+    </div>
+    <div class="mb-1">
+      <a href="<?= APP_URL ?>/terminos.php" class="text-decoration-none text-muted" data-cy="footer-terminos">Términos y Condiciones</a>
+      &middot;
+      <a href="<?= APP_URL ?>/privacidad.php" class="text-decoration-none text-muted" data-cy="footer-privacidad">Política de Privacidad</a>
     </div>
     <div>GoalBet 2026 &middot; proyecto educativo de apuestas deportivas &middot; <?= date('Y') ?></div>
   </div>
