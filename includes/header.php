@@ -21,6 +21,7 @@ $gb_activo = static fn(string ...$f): string => in_array($gb_script, $f, true) ?
 <link href="<?= APP_URL ?>/public/css/partidos-ui.css" rel="stylesheet">
 <link href="<?= APP_URL ?>/public/css/alineacion-lista.css" rel="stylesheet">
 <link href="<?= APP_URL ?>/public/css/goalbet-ecotienda.css" rel="stylesheet">
+<link href="<?= APP_URL ?>/public/css/live.css" rel="stylesheet">
 </head>
 <body>
 

@@ -1,0 +1,45 @@
+/* Tiempo real (etapa 4). Solo estilos NUEVOS: no toca ninguna regla existente. */
+
+/* Destello cuando cambia un marcador / insignia */
+@keyframes gb-live-flash {
+  0%   { background-color: rgba(250, 204, 21, .55); }
+  100% { background-color: transparent; }
+}
+.live-flash {
+  animation: gb-live-flash 1.6s ease-out;
+  border-radius: .4rem;
+}
+
+/* Evento nuevo en la línea de tiempo */
+@keyframes gb-live-nuevo {
+  0%   { box-shadow: 0 0 0 0 rgba(250, 204, 21, .7); }
+  100% { box-shadow: 0 0 0 14px rgba(250, 204, 21, 0); }
+}
+.tl-nuevo .tl-card {
+  animation: gb-live-nuevo 1.8s ease-out;
+}
+
+/* Banner "¡Gol!" */
+.live-aviso {
+  margin: .75rem auto 0;
+  max-width: 34rem;
+  padding: .5rem .9rem;
+  border-radius: .6rem;
+  text-align: center;
+  font-weight: 600;
+  background: rgba(16, 185, 129, .15);
+  border: 1px solid rgba(16, 185, 129, .6);
+}
+.live-aviso[hidden] { display: none; }
+.live-aviso a { color: inherit; text-decoration: underline; }
+
+/* Texto de conexión junto a la insignia */
+.live-status { font-size: .75rem; margin-left: .4rem; }
+.live-status.live-on  { color: #22c55e; }
+.live-status.live-off { color: #f59e0b; }
+.live-status a { color: inherit; text-decoration: underline; }
+
+@media (prefers-reduced-motion: reduce) {
+  .live-flash,
+  .tl-nuevo .tl-card { animation: none; }
+}

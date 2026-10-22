@@ -2,6 +2,7 @@
 require_once __DIR__ . '/includes/bootstrap.php';
 require_once __DIR__ . '/includes/DetallePartido.php';
 require_once __DIR__ . '/includes/camisetas.php';
+require_once __DIR__ . '/includes/live_data.php';
 requerir_login();
 
 $pdo = db();
@@ -188,20 +189,22 @@ $statsV = $hayDatos ? (json_decode((string) $det['stats_visita'], true) ?: []) :
   <div class="alert alert-<?= e($f['tipo']) ?>"><?= e($f['mensaje']) ?></div>
 <?php endforeach; ?>
 
-<section class="pd-head">
+<section class="pd-head" <?= live_attrs($p, true) ?>>
   <div class="pd-meta">
     <span class="badge bg-dark badge-deporte"><?= e($p['deporte']) ?></span>
     <?= e($p['liga'] ?? 'Amistoso') ?><?= $p['jornada'] ? ' · Jornada ' . (int) $p['jornada'] : '' ?>
     · <?= e(fecha_partido_legible($p['fecha_partido'], 'd/m/Y h:i A')) ?> <small>(<?= e(app_tz_etiqueta()) ?>)</small>
-    <?= $p['estado'] === 'en_curso' ? badge_en_vivo($p['minuto_actual'] ?? null) : badge_estado($p['estado']) ?>
+    <span data-live="badge"><?= $p['estado'] === 'en_curso' ? badge_en_vivo($p['minuto_actual'] ?? null) : badge_estado($p['estado']) ?></span>
+    <small class="live-status" data-live="conexion"></small>
   </div>
+  <div class="live-aviso" data-live="aviso" role="status" aria-live="polite" hidden></div>
   <div class="pd-teams">
     <div class="pd-team">
       <?= escudo_equipo($p['escudo_local'], $p['equipo_local'], 'lg') ?>
       <h2><?= e($p['equipo_local']) ?></h2>
-      <ul class="pd-scorers"><?php foreach ($goleadores[$idLocal] as $g): ?><li>⚽ <?= e($g) ?></li><?php endforeach; ?></ul>
+      <ul class="pd-scorers" data-live="goleadores" data-lado="local"><?php foreach ($goleadores[$idLocal] as $g): ?><li>⚽ <?= e($g) ?></li><?php endforeach; ?></ul>
     </div>
-    <div class="pd-score">
+    <div class="pd-score" data-live="score">
       <?php if ($muestraMarcador): ?>
         <?= (int) $p['marcador_local'] ?> <span>-</span> <?= (int) $p['marcador_visita'] ?>
       <?php else: ?>
@@ -211,7 +214,7 @@ $statsV = $hayDatos ? (json_decode((string) $det['stats_visita'], true) ?: []) :
     <div class="pd-team">
       <?= escudo_equipo($p['escudo_visita'], $p['equipo_visita'], 'lg') ?>
       <h2><?= e($p['equipo_visita']) ?></h2>
-      <ul class="pd-scorers"><?php foreach ($goleadores[$idVisita] as $g): ?><li>⚽ <?= e($g) ?></li><?php endforeach; ?></ul>
+      <ul class="pd-scorers" data-live="goleadores" data-lado="visita"><?php foreach ($goleadores[$idVisita] as $g): ?><li>⚽ <?= e($g) ?></li><?php endforeach; ?></ul>
     </div>
   </div>
 
@@ -271,7 +274,7 @@ $statsV = $hayDatos ? (json_decode((string) $det['stats_visita'], true) ?: []) :
 <div class="tab-content pd-panel">
 
   <!-- ============ CRONOLOGÍA ============ -->
-  <div class="tab-pane fade show active" id="tab-cronologia">
+  <div class="tab-pane fade show active" id="tab-cronologia" data-live="cronologia">
     <?php if (!$eventos): ?>
       <p class="text-muted mb-0">Todavía no hay eventos.</p>
     <?php else: ?>

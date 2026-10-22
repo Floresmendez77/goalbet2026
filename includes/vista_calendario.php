@@ -268,10 +268,10 @@ $etiquetaRes = ['G' => 'Ganó', 'E' => 'Empató', 'P' => 'Perdió'];
           $foco = $ids !== null ? cal_equipo_foco($p, $ids) : null;
           $res = $foco !== null ? cal_perspectiva($p, $foco)['resultado'] : '';
         ?>
-          <div class="cal-card <?= $res !== '' ? 'res-' . $res : '' ?>">
+          <div class="cal-card <?= $res !== '' ? 'res-' . $res : '' ?>" <?= live_attrs($p) ?>>
             <div class="match-top">
               <span class="match-liga"><span class="badge bg-dark badge-deporte"><?= e($p['deporte']) ?></span> <?= e($p['liga'] ?? 'Amistoso') ?></span>
-              <?= badge_estado($p['estado']) ?>
+              <span data-live="badge"><?= badge_estado($p['estado']) ?></span>
             </div>
             <div class="match-teams">
               <div class="team">
@@ -280,9 +280,9 @@ $etiquetaRes = ['G' => 'Ganó', 'E' => 'Empató', 'P' => 'Perdió'];
               </div>
               <div class="match-center">
                 <?php if ($p['estado'] === 'finalizado'): ?>
-                  <span class="match-score"><?= e(cal_marcador($p)) ?></span>
+                  <span class="match-score" data-live="score"><?= e(cal_marcador($p)) ?></span>
                 <?php else: ?>
-                  <span class="match-vs">VS</span>
+                  <span class="match-vs" data-live="score">VS</span>
                 <?php endif; ?>
                 <span class="match-time"><?= e(cal_hora($p['_local'])) ?></span>
               </div>

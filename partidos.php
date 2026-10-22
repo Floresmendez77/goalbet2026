@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/includes/bootstrap.php';
 require_once __DIR__ . '/includes/calendario.php';
+require_once __DIR__ . '/includes/live_data.php';
 requerir_login();
 
 $pdo = db();
@@ -143,11 +144,11 @@ require __DIR__ . '/includes/header.php';
   <?php foreach ($partidos as $p): ?>
     <?php $abierto = $p['estado'] === 'programado' && partido_futuro($p['fecha_partido']); ?>
     <div class="col-md-6">
-      <div class="card card-partido match-card h-100">
+      <div class="card card-partido match-card h-100" <?= live_attrs($p) ?>>
         <div class="card-body">
           <div class="match-top">
             <span class="match-liga"><span class="badge bg-dark badge-deporte"><?= e($p['deporte']) ?></span> <?= e($p['liga'] ?? 'Amistoso') ?></span>
-            <?= $p['estado'] === 'en_curso' ? badge_en_vivo($p['minuto_actual'] ?? null) : badge_estado($p['estado']) ?>
+            <span data-live="badge"><?= $p['estado'] === 'en_curso' ? badge_en_vivo($p['minuto_actual'] ?? null) : badge_estado($p['estado']) ?></span>
           </div>
 
           <div class="match-teams">
@@ -157,9 +158,9 @@ require __DIR__ . '/includes/header.php';
             </div>
             <div class="match-center">
               <?php if ($p['estado'] === 'finalizado' || ($p['estado'] === 'en_curso' && $p['marcador_local'] !== null)): ?>
-                <span class="match-score"><?= (int) $p['marcador_local'] ?> - <?= (int) $p['marcador_visita'] ?></span>
+                <span class="match-score" data-live="score"><?= (int) $p['marcador_local'] ?> - <?= (int) $p['marcador_visita'] ?></span>
               <?php else: ?>
-                <span class="match-vs">VS</span>
+                <span class="match-vs" data-live="score">VS</span>
               <?php endif; ?>
               <span class="match-date"><?= fecha_partido_legible($p['fecha_partido'], 'd/m/Y') ?></span>
               <span class="match-time"><?= fecha_partido_legible($p['fecha_partido'], 'h:i A') ?></span>

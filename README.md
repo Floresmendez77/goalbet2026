@@ -198,7 +198,7 @@ navegadores ──(sondeo cada 15-60 s, con ETag)──> api/live.php ───�
 | 1 | Cron en vivo: sale de inmediato si no hay partidos activos, con `flock` y una sola sincronización por liga | `cron/live_cron.php` |
 | 2 | Minuto actual, marcador y estado «en_curso» + insignia «EN VIVO 67'» | `seeder/Seeders/EspnSeeder.php`, `badge_en_vivo()` |
 | 3 | Endpoint JSON de solo lectura (marcador, minuto, goles con asistente, tarjetas, estado) | `api/live.php`, `includes/live_data.php` |
-| 4 | _(pendiente)_ JavaScript que consulta el endpoint y actualiza la pantalla | |
+| 4 | JavaScript que consulta el endpoint y actualiza la pantalla sola (marcador, minuto, estado, goles con asistente, tarjetas, cambios) | `public/js/live.js`, `public/css/live.css` |
 
 ### Programar el cron (cada minuto)
 
@@ -241,6 +241,18 @@ Requiere sesión iniciada (responde `401` en JSON, no redirige). Solo lee de la 
 - Tipos de evento: `gol`, `gol_penal`, `autogol`, `penal_fallado`, `amarilla`, `roja`, `segunda_amarilla`, `cambio` (`entra` / `sale`), `var`, `medio_tiempo`.
 - Errores (JSON): `401 no_autenticado | cuenta_desactivada`, `400 ids_requeridos | ids_invalidos | demasiados_ids | eventos_requiere_un_solo_partido`, `405 metodo_no_permitido`, `500 error_interno` (con `codigo` de incidente que aparece en `seeder/logs/php_errors.log`).
 
+### Pantalla en vivo (etapa 4): `public/js/live.js`
+
+Lo carga `includes/footer.php` en todas las páginas, pero **no hace nada** si la página no tiene elementos `data-live-partido` (los pone `live_attrs()` en `partido.php`, en la lista de `partidos.php` y en las tarjetas del día de la vista calendario).
+
+- Consulta `api/live.php` con los partidos que importan: los `en_curso` y los `programado` dentro de la ventana −4 h … +2 h (máx. 50). En `partido.php` pide además `eventos=1`.
+- Respeta el `poll` del servidor (15 / 30 / 60 s, con ±10 % de variación para no sincronizar a todos los navegadores). Usa `If-None-Match` con la huella `v`: si nada cambió, el servidor responde `304` y la pantalla no se toca.
+- Pestaña oculta = no consulta; al volver a verla, actualiza al instante. Si falla la red o el servidor, reintenta con espera creciente (15 → 30 → 60 → 120 s). Con `401` se detiene y ofrece «Inicia sesión».
+- Cuando ya no queda ningún partido en vivo o por empezar, deja de consultar por completo.
+- Todo el texto se inserta con `textContent` (nunca `innerHTML`), así que un nombre de jugador con HTML no puede inyectar nada.
+- Un gol, una roja o un cambio nuevo se resalta en la línea de tiempo y en `partido.php` aparece un aviso «⚽ ¡Gol de … · Asistencia: …» (los eventos que ya existían al abrir la página no se anuncian).
+- Solo pinta; no apuesta ni liquida nada. Las apuestas se siguen resolviendo únicamente con el trigger `trg_partidos_resolver_apuestas`.
+
 ### Probar sin esperar un partido real
 
 ```sql
@@ -258,3 +270,5 @@ UPDATE partidos SET estado = 'programado', marcador_local = NULL, marcador_visit
 ```
 
 > No pases el partido de prueba a `finalizado`: el trigger liquida las apuestas reales de ese partido.
+
+Para ver la etapa 4: **pausá el cron en vivo mientras probás** (si no, ESPN puede pisar tus cambios manuales), abrí `partido.php?id=123` y `partidos.php?vista=lista` con sesión iniciada y ejecutá los pasos 2 y 3 en phpMyAdmin. En ≤ 15 s la pantalla cambia sola. Cambiá el minuto, el marcador o agregá otro gol y mirá cómo se actualiza sin recargar.

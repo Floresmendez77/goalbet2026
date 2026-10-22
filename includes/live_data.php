@@ -157,3 +157,17 @@ function live_version(array $payload): string
 {
     return substr(sha1((string) json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE)), 0, 20);
 }
+
+/**
+ * Atributos HTML que enganchan una tarjeta/cabecera de partido al JavaScript de tiempo real
+ * (public/js/live.js). $p = fila de `partidos` (necesita id, estado y fecha_partido, que se guarda en UTC).
+ * $conEventos = true en partido.php: pide también la línea de tiempo (goles, asistencias, tarjetas...).
+ */
+function live_attrs(array $p, bool $conEventos = false): string
+{
+    $inicio = gmdate('Y-m-d\TH:i:s\Z', (int) strtotime((string) $p['fecha_partido'] . ' UTC'));
+    return 'data-live-partido="' . (int) $p['id'] . '"'
+        . ' data-live-estado="' . e((string) $p['estado']) . '"'
+        . ' data-live-inicio="' . e($inicio) . '"'
+        . ($conEventos ? ' data-live-eventos="1"' : '');
+}
