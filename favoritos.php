@@ -36,7 +36,7 @@ $nombreEquipo = static function (PDO $pdo, int $id): string {
 switch ($accion) {
     case 'agregar':
         if ($idEquipo > 0 && cal_agregar_favorito($pdo, $uid, $idEquipo)) {
-            flash('success', $nombreEquipo($pdo, $idEquipo) . ' se agregó a tus equipos favoritos.');
+            flash('success', $nombreEquipo($pdo, $idEquipo) . ' se agregó a tus equipos favoritos. Te vamos a avisar por correo antes de sus partidos, con el 11 titular y el resultado.');
             $destino .= '&equipo=' . $idEquipo;
         } else {
             flash('danger', 'No se pudo agregar ese equipo.');

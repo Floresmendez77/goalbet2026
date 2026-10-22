@@ -6,7 +6,7 @@
 ![Cypress](https://img.shields.io/badge/Cypress-E2E-17202C?style=for-the-badge&logo=cypress&logoColor=white)
 [![QA CI](https://github.com/Floresmendez77/goalbet2026/actions/workflows/qa.yml/badge.svg)](https://github.com/Floresmendez77/goalbet2026/actions/workflows/qa.yml)
 
-
+> **Demo en vivo:** _(pendiente: pega aquí la URL de AlwaysData cuando despliegues)_
 
 > [!WARNING]
 > **Proyecto educativo y de portafolio.** Todo el dinero y los saldos son **simulados**: no existe ningún procesamiento de pagos reales. El sitio incluye aviso +18 y de juego responsable.
@@ -147,3 +147,23 @@ Proyecto de portafolio. Si tienes comentarios o quieres conversar sobre él:
 
 - **Andrew Flores Méndez** — [GitHub @Floresmendez77](https://github.com/Floresmendez77)
 - _(agrega aquí tu LinkedIn o correo de contacto)_
+
+
+## ✉️ Correo electrónico (SMTP)
+
+GoalBet envía correos reales con PHPMailer (incluido en `includes/PHPMailer/`, sin Composer): confirmación de correo al registrarse, bienvenida, recuperación de contraseña, aviso de contraseña cambiada y recarga aprobada/rechazada.
+
+1. Importar la migración: `database/migracion_fase1_email.sql` (las cuentas existentes quedan como verificadas).
+2. Agregar en `seeder/.env` las claves `MAIL_*`, `APP_PUBLIC_URL` y `EMAIL_VERIFY_REQUIRED` (ver `seeder/.env.example`).
+3. Sin SMTP y con `APP_ENV=local` los correos no se envían: se guardan en `seeder/logs/mail_dev.log` y el enlace de confirmación se muestra en pantalla.
+
+### 🔔 Avisos automáticos (favoritos y apuestas)
+
+`cron/avisos_cron.php` envía: recordatorio de partidos de equipos favoritos (3 días, 1 día y 3 horas antes), 11 titular (fútbol), resultado final con lo ganado/perdido en tus apuestas, resultado de combinadas y reembolsos. Cada usuario puede darse de baja desde el enlace de cualquier aviso (`baja_avisos.php`).
+
+1. Importar `database/migracion_fase1b_avisos.sql`.
+2. Programar cada 15 minutos: `php /ruta/al/proyecto/cron/avisos_cron.php` (junto a `cron/sync_cron.php`, que es quien actualiza los marcadores).
+
+### 👤 Perfil de usuario
+
+`perfil.php` (menú del usuario → «Mi perfil»): editar nombre/apellido/teléfono, cambiar contraseña pidiendo la actual (con límite de intentos), cambiar correo con confirmación por enlace al correo nuevo (y aviso al anterior) y activar/desactivar los avisos por correo. Requiere importar `database/migracion_fase2_perfil.sql`.

@@ -6,6 +6,7 @@ if (esta_logueado()) {
 }
 
 $error = null;
+$mostrarReenvio = false;
 $identificador = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -41,6 +42,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             } elseif ((int) $usuario['activo'] === 0) {
                 $error = 'Esta cuenta está desactivada. Contactá a un administrador.';
+            } elseif (email_verificacion_requerida() && (int) ($usuario['email_verificado'] ?? 1) === 0) {
+                $error = 'Todavía no confirmaste tu correo. Revisá tu bandeja de entrada (y spam) y abrí el enlace que te enviamos.';
+                $mostrarReenvio = true;
             } else {
                 registrar_intento_login($identificador, $ip, true);
                 reiniciar_intentos_fallidos($identificador, $ip);
@@ -66,7 +70,12 @@ require __DIR__ . '/includes/header.php';
         <h1 class="h4 mb-4 text-center"><i class="bi bi-box-arrow-in-right"></i> Ingresar</h1>
 
         <?php if ($error): ?>
-          <div class="alert alert-danger" data-cy="login-error"><?= e($error) ?></div>
+          <div class="alert alert-danger" data-cy="login-error">
+            <?= e($error) ?>
+            <?php if ($mostrarReenvio): ?>
+              <div class="mt-2"><a href="<?= APP_URL ?>/reenviar_verificacion.php?id=<?= urlencode($identificador) ?>" class="alert-link">Reenviar correo de confirmación</a></div>
+            <?php endif; ?>
+          </div>
         <?php endif; ?>
 
         <form method="post" novalidate>

@@ -44,6 +44,9 @@ if (session_status() === PHP_SESSION_NONE) {
 
 require_once __DIR__ . '/functions.php';
 require_once __DIR__ . '/auth.php';
+require_once __DIR__ . '/mailer.php';
+require_once __DIR__ . '/mail_templates.php';
+require_once __DIR__ . '/verificacion_email.php';
 
 /**
  * Devuelve la conexión PDO compartida (singleton via Database::connect()).

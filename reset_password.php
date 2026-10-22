@@ -55,6 +55,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $registroValido) {
             reiniciar_intentos_fallidos($registroValido['username'], $ip);
             reiniciar_intentos_fallidos($registroValido['email'], $ip);
 
+            correo_password_cambiada([
+                'nombre'   => $registroValido['nombre'],
+                'username' => $registroValido['username'],
+                'email'    => $registroValido['email'],
+            ]);
+
             flash('success', 'Tu contraseña ha sido restablecida con éxito. Ya podés iniciar sesión.');
             redirect('/login.php');
         } catch (Throwable $e) {

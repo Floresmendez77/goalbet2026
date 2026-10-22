@@ -28,6 +28,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         redirect('/admin/recargas.php');
     }
 
+    $correoPendiente = null; // se envía DESPUÉS de confirmar la operación en BD
+
     if ($accion === 'aprobar') {
         try {
             $pdo->beginTransaction();
@@ -55,6 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $pdo->commit();
             flash('success', 'Recarga aprobada y saldo acreditado.');
+            $correoPendiente = ['tipo' => 'aprobada', 'saldo_nuevo' => $saldo_nuevo, 'motivo' => ''];
         } catch (Throwable $e) {
             $pdo->rollBack();
             flash('danger', 'No se pudo aprobar la recarga.');
@@ -67,6 +70,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'UPDATE recargas SET estado = "rechazada", id_admin = ?, motivo_rechazo = ?, procesada_at = NOW() WHERE id = ?'
         )->execute([$admin['id'], $motivo ?: 'Sin motivo especificado', $id_recarga]);
         flash('success', 'Recarga rechazada.');
+        $correoPendiente = ['tipo' => 'rechazada', 'saldo_nuevo' => 0.0, 'motivo' => $motivo ?: 'Sin motivo especificado'];
+    }
+
+    // Aviso por correo al usuario (si falla el SMTP la operación ya quedó registrada igual).
+    if ($correoPendiente !== null) {
+        $stmtU = $pdo->prepare('SELECT nombre, username, email FROM usuarios WHERE id = ?');
+        $stmtU->execute([$recarga['id_usuario']]);
+        $dest = $stmtU->fetch();
+        if ($dest) {
+            $ok = $correoPendiente['tipo'] === 'aprobada'
+                ? correo_recarga_aprobada($dest, $recarga, (float) $correoPendiente['saldo_nuevo'])
+                : correo_recarga_rechazada($dest, $recarga, (string) $correoPendiente['motivo']);
+            if (!$ok) {
+                flash('warning', 'La operación se registró, pero no se pudo enviar el correo de aviso al usuario.');
+            }
+        }
     }
 
     redirect('/admin/recargas.php' . ($estado_filtro ? '?estado=' . $estado_filtro : ''));
@@ -100,7 +119,11 @@ require __DIR__ . '/../includes/header.php';
 </div>
 
 <?php if (!$recargas): ?>
-  <div class="alert alert-secondary">No hay solicitudes con ese filtro.</div>
+  <div class="empty-state">
+  <div class="empty-icon"><i class="bi bi-inbox"></i></div>
+  <h3 class="empty-title">No hay solicitudes con ese filtro.</h3>
+  <p>Cuando haya datos para mostrar, van a aparecer acá.</p>
+</div>
 <?php endif; ?>
 
 <div class="row g-3">
