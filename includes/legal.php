@@ -8,7 +8,7 @@
 
 declare(strict_types=1);
 
-const TERMINOS_VERSION = '1.0';
+const TERMINOS_VERSION = '1.1';
 const LEGAL_FECHA      = '21 de octubre de 2026';
 
 /** Correo de contacto público (CONTACT_EMAIL en seeder/.env). Vacío si no está configurado. */

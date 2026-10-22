@@ -29,6 +29,13 @@ if (!is_dir($logDir)) {
 }
 ini_set('error_log', $logDir . '/php_errors.log');
 
+// Página 500 amable para errores sin atrapar + buffer de salida (permite descartar una página a medio armar).
+require_once __DIR__ . '/errores.php';
+gb_instalar_manejo_errores();
+if (PHP_SAPI !== 'cli' && ob_get_level() === 0) {
+    ob_start();
+}
+
 // Sesión: cookie httponly + SameSite, y Secure si se sirve por HTTPS.
 if (session_status() === PHP_SESSION_NONE) {
     $https = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');

@@ -171,3 +171,10 @@ GoalBet envía correos reales con PHPMailer (incluido en `includes/PHPMailer/`, 
 ### 📄 Términos y privacidad
 
 `terminos.php` y `privacidad.php` (públicas, enlazadas desde el registro y el pie de página). Al registrarse se guarda la versión aceptada (`usuarios.terminos_version` y `terminos_aceptados_at`). Si cambiás los textos, subí `TERMINOS_VERSION` y `LEGAL_FECHA` en `includes/legal.php`. Requiere importar `database/migracion_fase3_legal.sql` y definir `CONTACT_EMAIL` en `seeder/.env`.
+
+### 🛟 Errores, ayuda y contacto
+
+- `404.php`: página para URLs inexistentes (la activa la regla de `.htaccess`; requiere `mod_rewrite`).
+- Errores 500: `includes/errores.php` muestra una página amable con un código de incidente; el detalle queda en `seeder/logs/php_errors.log` (en `APP_ENV=local` también se ve en pantalla).
+- `ayuda.php`: preguntas frecuentes y formulario de contacto que llega por correo a `CONTACT_EMAIL` (o `MAIL_FROM` si no está definido). Máximo 5 mensajes por hora por IP.
+- Si un administrador desactiva una cuenta, el usuario con sesión abierta es sacado en su próxima petición (`requerir_login()`).

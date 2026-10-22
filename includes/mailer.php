@@ -63,7 +63,7 @@ function correo_a_texto(string $html): string
  *   y devuelve true (así se puede desarrollar sin credenciales).
  * - Sin SMTP en producción: registra el error y devuelve false.
  */
-function enviar_correo(string $para, string $nombre, string $asunto, string $html, ?string $texto = null): bool
+function enviar_correo(string $para, string $nombre, string $asunto, string $html, ?string $texto = null, ?string $replyTo = null, string $replyNombre = ''): bool
 {
     $texto ??= correo_a_texto($html);
 
@@ -106,6 +106,9 @@ function enviar_correo(string $para, string $nombre, string $asunto, string $htm
 
         $mail->setFrom($from, $fromNombre);
         $mail->addAddress($para, $nombre);
+        if ($replyTo !== null && filter_var($replyTo, FILTER_VALIDATE_EMAIL)) {
+            $mail->addReplyTo($replyTo, $replyNombre);
+        }
         $mail->isHTML(true);
         $mail->Subject = $asunto;
         $mail->Body    = $html;

@@ -26,6 +26,7 @@ require __DIR__ . '/includes/header.php';
           <li><strong>Datos de tu cuenta:</strong> nombre, apellido, nombre de usuario, correo electrónico y teléfono (opcional). Tu contraseña se guarda <strong>cifrada</strong> (hash); nadie, ni el administrador, puede leerla.</li>
           <li><strong>Tu actividad:</strong> apuestas y boletos, solicitudes de recarga (monto, método, referencia y el texto que escribas en «comprobante»), movimientos de saldo, equipos favoritos y tus preferencias (vista de partidos, avisos por correo).</li>
           <li><strong>Datos técnicos de seguridad:</strong> al iniciar sesión se registra tu usuario o correo y tu dirección IP para bloquear intentos de adivinar contraseñas. Estos registros se borran automáticamente a las 24 horas.</li>
+          <li><strong>Mensajes de contacto:</strong> si nos escribís desde la página de ayuda, recibimos tu nombre, correo y el mensaje por correo electrónico, y los usamos solo para responderte.</li>
           <li><strong>Aceptación de términos:</strong> la versión de los términos que aceptaste y la fecha en que lo hiciste.</li>
         </ul>
         <p class="small text-muted">Por favor no escribas datos sensibles (números de tarjeta, claves) en el campo «comprobante».</p>

@@ -168,3 +168,30 @@ function correo_email_cambiado(array $u, string $nuevoEmail): bool
     );
     return enviar_correo((string) $u['email'], _correo_nombre($u), 'El correo de tu cuenta cambió - GoalBet 2026', $html);
 }
+
+/** Mensaje del formulario de ayuda, para el equipo de soporte. Se responde con «Responder» (Reply-To = el usuario). */
+function correo_contacto(string $destino, array $d): bool
+{
+    $filas = [
+        ['Tema', e($d['tema'])],
+        ['Nombre', e($d['nombre'])],
+        ['Correo', e($d['email'])],
+    ];
+    if (!empty($d['username'])) {
+        $filas[] = ['Usuario', '@' . e((string) $d['username']) . ' (id ' . (int) $d['id'] . ')'];
+    }
+    $tabla = '<table role="presentation" cellspacing="0" cellpadding="6" style="font-size:14px;border:1px solid #eee;border-radius:6px;width:100%;margin:8px 0">';
+    foreach ($filas as [$k, $v]) {
+        $tabla .= '<tr><td style="color:#888;width:90px">' . e($k) . '</td><td>' . $v . '</td></tr>';
+    }
+    $tabla .= '</table>';
+
+    $html = correo_layout(
+        'Nuevo mensaje de ayuda',
+        $tabla . '<p style="margin:12px 0 4px;color:#888">Mensaje:</p><div style="background:#f7f7f7;border-radius:6px;padding:12px;white-space:pre-wrap">' . e($d['mensaje']) . '</div>',
+        null,
+        null,
+        'Podés responder directamente a este correo: la respuesta le llega a ' . e($d['email']) . '.'
+    );
+    return enviar_correo($destino, 'Soporte GoalBet', '[Ayuda] ' . $d['tema'] . ' · ' . $d['nombre'], $html, null, $d['email'], $d['nombre']);
+}

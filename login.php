@@ -7,6 +7,7 @@ if (esta_logueado()) {
 
 $error = null;
 $mostrarReenvio = false;
+$mostrarAyuda = false;
 $identificador = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -42,6 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             } elseif ((int) $usuario['activo'] === 0) {
                 $error = 'Esta cuenta está desactivada. Contactá a un administrador.';
+                $mostrarAyuda = true;
             } elseif (email_verificacion_requerida() && (int) ($usuario['email_verificado'] ?? 1) === 0) {
                 $error = 'Todavía no confirmaste tu correo. Revisá tu bandeja de entrada (y spam) y abrí el enlace que te enviamos.';
                 $mostrarReenvio = true;
@@ -74,6 +76,9 @@ require __DIR__ . '/includes/header.php';
             <?= e($error) ?>
             <?php if ($mostrarReenvio): ?>
               <div class="mt-2"><a href="<?= APP_URL ?>/reenviar_verificacion.php?id=<?= urlencode($identificador) ?>" class="alert-link">Reenviar correo de confirmación</a></div>
+            <?php endif; ?>
+            <?php if ($mostrarAyuda): ?>
+              <div class="mt-2"><a href="<?= APP_URL ?>/ayuda.php" class="alert-link">Contactar a soporte</a></div>
             <?php endif; ?>
           </div>
         <?php endif; ?>

@@ -24,6 +24,17 @@ function requerir_login(): void
         flash('warning', 'Iniciá sesión para continuar.');
         redirect('/login.php');
     }
+
+    // Si un administrador desactivó (o borró) la cuenta mientras tenía la sesión abierta, se cierra la sesión.
+    $st = db()->prepare('SELECT activo FROM usuarios WHERE id = ?');
+    $st->execute([$_SESSION['usuario']['id']]);
+    $activo = $st->fetchColumn();
+    if ($activo === false || (int) $activo === 0) {
+        unset($_SESSION['usuario']);
+        session_regenerate_id(true);
+        flash('danger', 'Tu cuenta fue desactivada. Si creés que es un error, contactá a soporte desde la página de ayuda.');
+        redirect('/login.php');
+    }
 }
 
 /** Exige rol admin; si no, corta con 403. Llamar al tope de páginas de admin/. */

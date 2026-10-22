@@ -72,6 +72,7 @@ $gb_activo = static fn(string ...$f): string => in_array($gb_script, $f, true) ?
             </a>
             <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end">
               <li><a class="dropdown-item" href="<?= APP_URL ?>/perfil.php" data-cy="nav-perfil"><i class="bi bi-person-gear"></i> Mi perfil</a></li>
+              <li><a class="dropdown-item" href="<?= APP_URL ?>/ayuda.php" data-cy="nav-ayuda"><i class="bi bi-question-circle"></i> Ayuda y contacto</a></li>
               <li><hr class="dropdown-divider"></li>
               <li><a class="dropdown-item" href="<?= APP_URL ?>/logout.php"><i class="bi bi-box-arrow-right"></i> Cerrar sesión</a></li>
             </ul>

@@ -10,6 +10,8 @@
       <a href="<?= APP_URL ?>/terminos.php" class="text-decoration-none text-muted" data-cy="footer-terminos">Términos y Condiciones</a>
       &middot;
       <a href="<?= APP_URL ?>/privacidad.php" class="text-decoration-none text-muted" data-cy="footer-privacidad">Política de Privacidad</a>
+      &middot;
+      <a href="<?= APP_URL ?>/ayuda.php" class="text-decoration-none text-muted" data-cy="footer-ayuda">Ayuda y contacto</a>
     </div>
     <div>GoalBet 2026 &middot; proyecto educativo de apuestas deportivas &middot; <?= date('Y') ?></div>
   </div>
